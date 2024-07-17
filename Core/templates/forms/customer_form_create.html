@@ -84,22 +84,22 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
-                                        {{form.name|as_crispy_field}}
+                                        {{form.customer_name|as_crispy_field}}
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        {{form.phone|as_crispy_field}}
+                                        {{form.customer_phone|as_crispy_field}}
                                      </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        {{form.address|as_crispy_field}}
+                                        {{form.customer_address|as_crispy_field}}
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
-                                        {{form.nation_no|as_crispy_field}}
+                                        {{form.customer_id_number|as_crispy_field}}
                                     </div>
                                 </div>
                                 {% if message == 'add' %}

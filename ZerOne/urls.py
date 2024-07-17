@@ -25,12 +25,8 @@ urlpatterns = [
     path('admin/', include('Core.urls')),
     path('', include('Core.urls')),
     path('',include('Auth.urls')),
-    path('factory/', include('Factories.urls')),
-    path('product/', include('Products.urls')),
-    path('worker/', include('Workers.urls')),
-    path('treasury/', include('Treasury.urls')),
-    path('wool/', include('Wool.urls')),
-    path('invoices/',include('Invoices.urls'), ),
+    path('customer/', include('Customer.urls')),
+    # path('factory/', include('Factories.urls')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'mathfilters',
     'Core',
     'Auth',
+    'Customer',
     'bootstrap4',
     'crispy_forms',
     
