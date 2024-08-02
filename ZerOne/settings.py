@@ -43,10 +43,14 @@ INSTALLED_APPS = [
     'mathfilters',
     'Core',
     'Auth',
-    'Customer',
     'bootstrap4',
     'crispy_forms',
-    
+    'Products',
+    'Factories',
+    'Workers',
+    'Invoices',
+    'Treasury',
+    'Wool',
 ]
 
 # Add this to Abstruct user 
@@ -92,7 +96,7 @@ DATABASES = {
     }
 }
 
-SESSION_COOKIE_AGE = 60 * 30  # 15 minutes in seconds
+SESSION_COOKIE_AGE = 60 * 15  # 15 minutes in seconds
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

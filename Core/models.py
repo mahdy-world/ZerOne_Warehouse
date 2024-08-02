@@ -18,8 +18,12 @@ class SystemInformation(models.Model):
     
     
 class Modules(models.Model):
+    factory_active = models.BooleanField(default=True, verbose_name="تنشيط المصانع")
+    product_active = models.BooleanField(default=True, verbose_name="تنشيط المنتجات")
     seller_active = models.BooleanField(default=True, verbose_name="تنشيط التجار")
+    worker_active = models.BooleanField(default=True, verbose_name="تنشيط العمال ")
     invoice_active = models.BooleanField(default=True, verbose_name="تنشيط الفواتير ")
+    supplier_active = models.BooleanField(default=True, verbose_name="تنشيط الموردين ")
     treasury_active = models.BooleanField(default=True, verbose_name="تنشيط الخزائن")
     wool_active = models.BooleanField(default=True, verbose_name="تنشيط الخيط")
     stop_date = models.DateField(null=True, blank=True, verbose_name="فترة تجريبية")
