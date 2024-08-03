@@ -52,12 +52,13 @@ class WoolColor(models.Model):
 class WoolSupplierQuantity(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ العملية")
     date = models.DateField(null=True, verbose_name="التاريخ", default=date.today)
-    supplier = models.ForeignKey(WoolSupplier, on_delete=models.CASCADE, verbose_name="الشركة")
+    supplier = models.ForeignKey(WoolSupplier, on_delete=models.CASCADE, verbose_name="التاجر")
     wool =  models.ForeignKey(Wool, on_delete=models.CASCADE, verbose_name='الخامة')
     wool_color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name="اللون")
     wool_item_count = models.FloatField(default=0.0, verbose_name="عدد الشكاير")
     wool_weight = models.FloatField(default=0.0, verbose_name="الوزن بالكيلو")
-    wool_price = models.FloatField(default=0.0, verbose_name="سعر الكيلو")
+    wool_loat_number = models.IntegerField(null=True, blank=True, verbose_name="رقم اللوط")
+    total_weight = models.FloatField(default=0.0, verbose_name="اجمالي الوزن")
     total_account = models.FloatField(default=0.0, verbose_name="اجمالي الحساب")
     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسؤول")
 
@@ -69,7 +70,7 @@ class WoolSupplierQuantity(models.Model):
 class WoolSupplierPayment(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ العملية")
     date = models.DateField(null=True, verbose_name="التاريخ", default=date.today)
-    supplier = models.ForeignKey(WoolSupplier, on_delete=models.CASCADE, verbose_name="الشركة")
+    supplier = models.ForeignKey(WoolSupplier, on_delete=models.CASCADE, verbose_name="التاجر")
     value = models.FloatField(default=0.0, verbose_name="المبلغ")
     reason = models.CharField(max_length=250, null=True, blank=True, verbose_name='الوصف/السبب')
     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسؤول")

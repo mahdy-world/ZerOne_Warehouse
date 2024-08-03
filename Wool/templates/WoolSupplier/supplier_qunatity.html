@@ -132,7 +132,7 @@ table.dataTable thead .sorting_desc_disabled {
                                                                     <th class="col-lg-2 col-xl-2 col-md-2 sel">{{form.wool_color|as_crispy_field}}</th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_item_count|as_crispy_field}}</th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_weight|as_crispy_field}} </th>
-                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_price|as_crispy_field}} </th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_loat_number|as_crispy_field}} </th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.total_account|as_crispy_field}} </th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">
                                                                         <button style="width: 100%" type="submit" class="btn btn-success">اضافة</button>
@@ -210,12 +210,11 @@ table.dataTable thead .sorting_desc_disabled {
                                                                         <th>التاريخ</th>
                                                                         <th>اسم الخامه</th>
                                                                         <th>نوع الخامة</th>
-                                                                        <th>الشركة</th>
                                                                         <th>رقم الخامة</th>
                                                                         <th>لون الخامة</th>
                                                                         <th>عدد الشكاير</th>
                                                                         <th>الوزن بالكيلو</th>
-                                                                        <th>سعر الكيلو</th>
+                                                                        <th>رقم اللوط</th>
                                                                         <th>اجمالي الحساب</th>
                                                                         {% if request.user.is_superuser %}
                                                                         {% if not supplier.deleted %}
@@ -268,7 +267,7 @@ table.dataTable thead .sorting_desc_disabled {
                                                                             {{x.wool_weight|floatformat:3}}
                                                                         </td>
                                                                         <td>
-                                                                            {{x.wool_price|floatformat:2}}
+                                                                            {{x.wool_loat_number}}
                                                                         </td>
                                                                         <td>
                                                                             {{ x.total_account|floatformat:2 }}
@@ -674,16 +673,15 @@ $(document).ready(function () {
 <script>
     $( '#wool_weight' ).on('change keyup', function () {
         var wool_weight = parseFloat(this.value);
-        var wool_price = parseFloat($('#wool_price').val());
-        $('#total_account').val(wool_weight*wool_price);
+        var wool_item_count = parseFloat($('#wool_item_count').val());
+        $('#total_weight').val(wool_weight*wool_item_count);
     });
 
-    $( '#wool_price' ).on('change keyup', function () {
-        var wool_price = parseFloat(this.value);
+    $( '#wool_item_count' ).on('change keyup', function () {
+        var wool_item_count = parseFloat(this.value);
         var wool_weight = parseFloat($('#wool_weight').val());
-        $('#total_account').val(wool_price*wool_weight);
+        $('#total_weight').val(wool_item_count*wool_weight);
     });
 
 </script>
-
 {% endblock js %}

@@ -23,6 +23,7 @@ class WoolForm(forms.ModelForm):
             'wool_type': forms.Select(attrs={'class': 'form-control', 'id':'wool_type'}),
             'wool_company': forms.TextInput(attrs={'class': 'form-control', 'id':'wool_company'}),
             'wool_number': forms.NumberInput(attrs={'class': 'form-control', 'min':'1', 'id':'wool_number'}),
+            'wool_weight': forms.NumberInput(attrs={'class': 'form-control', 'min':'1', 'id':'wool_weight'}),
         }
 
 class WoolSupplierDeleteForm(forms.ModelForm):
@@ -46,15 +47,16 @@ class WoolDeleteForm(forms.ModelForm):
 class WoolSupplierQuantityForm(forms.ModelForm):
     class Meta:
         model = WoolSupplierQuantity
-        fields = ['date', 'wool', 'wool_color', 'wool_item_count','wool_weight', 'wool_price', 'total_account']
+        fields = ['date', 'wool', 'wool_color', 'wool_item_count','wool_weight',  'total_account', 'wool_loat_number', 'total_weight']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'id': 'date', 'type': 'date'}),
             'wool': forms.Select(attrs={'class': 'form-control', 'id': 'wool'}),
             'wool_color': forms.Select(attrs={'class': 'form-control', 'id': 'wool_color'}),
             'wool_item_count': forms.NumberInput(attrs={'class': 'form-control', 'min':'1', 'id': 'wool_item_count'}),
             'wool_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_weight'}),
-            'wool_price': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_price'}),
-            'total_account': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_account', 'readonly': 'readonly'}),
+            'wool_loat_number': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_loat_number'}),
+            'total_account': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_account'}),
+            'total_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_weight'}),
         }
 
 
@@ -62,7 +64,7 @@ class WoolSupplierQuantityForm(forms.ModelForm):
 class WoolQuantityForm(forms.ModelForm):
     class Meta:
         model = WoolSupplierQuantity
-        fields = ['date', 'supplier', 'wool_color', 'wool_item_count','wool_weight', 'wool_price', 'total_account']
+        fields = ['date', 'supplier', 'wool_color', 'wool_item_count','wool_weight',  'total_account', 'wool_loat_number', 'total_weight']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'id': 'date', 'type': 'date'}),
             'supplier': forms.Select(attrs={'class': 'form-control', 'id': 'supplier'}),
@@ -70,7 +72,9 @@ class WoolQuantityForm(forms.ModelForm):
             'wool_item_count': forms.NumberInput(attrs={'class': 'form-control', 'min':'1', 'id': 'wool_item_count'}),
             'wool_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_weight'}),
             'wool_price': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_price'}),
-            'total_account': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_account', 'readonly': 'readonly'}),
+            'wool_loat_number': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_loat_number'}),
+            'total_account': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_account'}),
+            'total_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_weight'}),
         }
 
 

@@ -146,14 +146,14 @@ def AddWoolQuantity(request, pk):
             if color_wool_id != None:
                 print(wool_color_object_id)
                 color_wool_id.count += form.cleaned_data['wool_item_count']
-                color_wool_id.weight += form.cleaned_data['wool_weight']
+                color_wool_id.weight += form.cleaned_data['total_weight']
                 color_wool_id.save()
         else:
             wool_color_object = WoolColor()
             wool_color_object.wool = wool_object
             wool_color_object.color = form.cleaned_data['wool_color']
             wool_color_object.count = form.cleaned_data['wool_item_count']
-            wool_color_object.weight = form.cleaned_data['wool_weight']
+            wool_color_object.weight = form.cleaned_data['total_weight']
             wool_color_object.save()
         
         obj.save()
@@ -184,7 +184,7 @@ def DelWoolQuantity(request, pk):
             # print(wool_color_object_id)
             if  color_wool_id.count >= quant.wool_item_count:
                 color_wool_id.count -= quant.wool_item_count
-                color_wool_id.weight -= quant.wool_weight
+                color_wool_id.weight -= quant.total_weight
                 color_wool_id.save()
             else:
                 color_wool_id.delete()
@@ -387,14 +387,14 @@ def AddWoolSupplierQuantity(request, pk):
             if color_wool_id != None:
                 print(wool_color_object_id)
                 color_wool_id.count += form.cleaned_data['wool_item_count']
-                color_wool_id.weight += form.cleaned_data['wool_weight']
+                color_wool_id.weight += form.cleaned_data['total_weight']
                 color_wool_id.save()
         else:
             wool_color_object = WoolColor()
             wool_color_object.wool = form.cleaned_data['wool']
             wool_color_object.color = form.cleaned_data['wool_color']
             wool_color_object.count = form.cleaned_data['wool_item_count']
-            wool_color_object.weight = form.cleaned_data['wool_weight']
+            wool_color_object.weight = form.cleaned_data['total_weight']
             wool_color_object.save()
         obj.save()
         
@@ -423,7 +423,7 @@ def DelWoolSupplierQuantity(request, pk):
             # print(wool_color_object_id)
             if  color_wool_id.count >= quant.wool_item_count:
                 color_wool_id.count -= quant.wool_item_count
-                color_wool_id.weight -= quant.wool_weight
+                color_wool_id.weight -= quant.total_weight
                 color_wool_id.save()
             else:
                 color_wool_id.delete()
@@ -488,7 +488,7 @@ def PrintWoolSupplierAll(request, pk):
 
     quantity = WoolSupplierQuantity.objects.filter(supplier=supplier)
     if quantity:
-        weight = quantity.aggregate(sum=Sum('wool_weight')).get('sum')
+        weight = quantity.aggregate(sum=Sum('total_weight')).get('sum')
         account = quantity.aggregate(account=Sum('total_account')).get('account')
     else:
         weight = 0
