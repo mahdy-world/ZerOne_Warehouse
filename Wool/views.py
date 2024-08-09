@@ -121,7 +121,8 @@ def WoolDetails(request, pk):
         'action_url': action_url,
         'quantity': quantity,
         'wool_color_filter': wool_color_filter,
-        'wool_objects_supplier': wool_objects_supplier
+        'wool_objects_supplier': wool_objects_supplier,
+        'wool_operation': WoolOperatoin.objects.all().order_by('-id')
     }
     return render(request, 'Wool/wool_details.html', context)
 
@@ -144,10 +145,19 @@ def AddWoolQuantity(request, pk):
             color_wool_id = WoolColor.objects.get(id=wool_color_object_id_list[0]) 
             # check if id not = none and update data for color 
             if color_wool_id != None:
-                print(wool_color_object_id)
                 color_wool_id.count += form.cleaned_data['wool_item_count']
                 color_wool_id.weight += form.cleaned_data['total_weight']
                 color_wool_id.save()
+                operation = WoolOperatoin()
+                
+                operation.operation_wool = wool_object
+                operation.operation_color = form.cleaned_data['wool_color']
+                operation.operation_type = 1 
+                operation.operation_count = form.cleaned_data['wool_item_count']
+                operation.operation_total_weight = form.cleaned_data['total_weight']
+                operation.operation_total_price = form.cleaned_data['total_account']
+                operation.created_user = request.user
+                operation.save()
         else:
             wool_color_object = WoolColor()
             wool_color_object.wool = wool_object
@@ -155,7 +165,17 @@ def AddWoolQuantity(request, pk):
             wool_color_object.count = form.cleaned_data['wool_item_count']
             wool_color_object.weight = form.cleaned_data['total_weight']
             wool_color_object.save()
-        
+            
+            operation = WoolOperatoin()
+            operation.operation_wool = wool_object
+            operation.operation_color = form.cleaned_data['wool_color']
+            operation.operation_type = 1 
+            operation.operation_count = form.cleaned_data['wool_item_count']
+            operation.operation_total_weight = form.cleaned_data['total_weight']
+            operation.operation_total_price = form.cleaned_data['total_account']
+            operation.created_user = request.user
+            operation.save()
+
         obj.save()
         
         
@@ -186,8 +206,28 @@ def DelWoolQuantity(request, pk):
                 color_wool_id.count -= quant.wool_item_count
                 color_wool_id.weight -= quant.total_weight
                 color_wool_id.save()
+                 
+                operation = WoolOperatoin()
+                operation.operation_wool = quant.wool
+                operation.operation_color = quant.wool_color
+                operation.operation_type = 4 
+                operation.operation_count = quant.wool_item_count
+                operation.operation_total_weight = quant.total_weight
+                operation.operation_total_price = quant.total_account
+                operation.created_user = request.user
+                operation.save()
             else:
+                operation = WoolOperatoin()
+                operation.operation_wool = quant.wool
+                operation.operation_color = quant.wool_color
+                operation.operation_type = 4 
+                operation.operation_count = quant.wool_item_count
+                operation.operation_total_weight = quant.total_weight
+                operation.operation_total_price = quant.total_account
+                operation.created_user = request.user
+                operation.save()
                 color_wool_id.delete()
+                
     quant.delete()
     messages.success(request, " تم حذف كمية بنجاح ", extra_tags="success")
     return redirect('Wool:WoolDetails', pk=id)
@@ -361,7 +401,8 @@ def WoolSupplierQuantityDetail(request, pk):
         'system_info': system_info,
         'date': datetime.now().date(),
         'wool_color_objects': wool_color,
-        'wool_name': wool_objects
+        'wool_name': wool_objects,
+        'wool_operation': WoolOperatoin.objects.all().order_by('-id')
     }
     return render(request, 'WoolSupplier/supplier_qunatity.html', context)
 
@@ -385,10 +426,18 @@ def AddWoolSupplierQuantity(request, pk):
             color_wool_id = WoolColor.objects.get(id=wool_color_object_id_list[0]) 
             # check if id not = none and update data for color 
             if color_wool_id != None:
-                print(wool_color_object_id)
                 color_wool_id.count += form.cleaned_data['wool_item_count']
                 color_wool_id.weight += form.cleaned_data['total_weight']
                 color_wool_id.save()
+                
+                operation = WoolOperatoin()
+                operation.operation_wool = form.cleaned_data['wool']
+                operation.operatoin_color = form.cleaned_data['wool_color']
+                operation.operation_type = 1 
+                operation.operation_count = form.cleaned_data['wool_item_count']
+                operation.operation_total_weight = form.cleaned_data['total_weight']
+                operation.created_user = request.user
+                operation.save()
         else:
             wool_color_object = WoolColor()
             wool_color_object.wool = form.cleaned_data['wool']
@@ -396,8 +445,16 @@ def AddWoolSupplierQuantity(request, pk):
             wool_color_object.count = form.cleaned_data['wool_item_count']
             wool_color_object.weight = form.cleaned_data['total_weight']
             wool_color_object.save()
+            
+            operation = WoolOperatoin()
+            operation.operation_wool = form.cleaned_data['wool']
+            operation.operatoin_color = form.cleaned_data['wool_color']
+            operation.operation_type = 1 
+            operation.operation_count = form.cleaned_data['wool_item_count']
+            operation.operation_total_weight = form.cleaned_data['total_weight']
+            operation.created_user = request.user
+            operation.save()
         obj.save()
-        
         
         messages.success(request, " تم اضافة كمية جديدة بنجاح ", extra_tags="success")
     else:

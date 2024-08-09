@@ -93,8 +93,9 @@ class WoolOperatoin(models.Model):
     operation_type = models.IntegerField(choices=OPERATION_TYPE, verbose_name='نوع العملية')
     operation_wool =  models.ForeignKey(Wool, on_delete=models.CASCADE, verbose_name='الخامة')
     operation_count = models.FloatField(default=0.0, verbose_name="الكمية")
-    operatoin_color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name="اللون")
+    operation_color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name="اللون")
     operation_total_weight = models.FloatField(default=0.0, verbose_name="اجمالي الوزن")
+    operation_total_price = models.FloatField(default=0.0, verbose_name="اجمالي الحساب")
     created_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسؤول")
 
     def __str__(self):
