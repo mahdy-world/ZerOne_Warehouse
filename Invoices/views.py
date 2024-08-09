@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 import weasyprint
+
+from Wool.models import WoolColor
 from .forms import *
 from django.contrib import messages
 from datetime import datetime
@@ -166,14 +168,15 @@ class InvoiceSave(LoginRequiredMixin, UpdateView):
         # return_value = form.cleaned_data.get("return_value")
         paid_value = form.cleaned_data.get("paid_value")
         old_value = form.cleaned_data.get("old_value")
+        check_value = form.cleaned_data.get("check_value")
         inv = form.save(commit=False)
         if int(self.object.invoice_type) == 1:
             # inv.overall = float(total) - float(discount) - float(return_value) - float(paid_value) + float(old_value)
-            inv.overall = float(total) - float(discount) - float(paid_value) + float(old_value)
+            inv.overall = float(total) - float(discount) - float(paid_value) - float(check_value) + float(old_value)
         elif int(self.object.invoice_type) == 2:
             inv.overall = float(old_value) - (float(total) - float(discount))
         else:
-            inv.overall = float(total) - float(discount)
+            inv.overall = float(total) - float(discount) - check_value
         form.save()
         myform = Invoice.objects.get(id=self.kwargs['pk'])
         myform.saved = 1
@@ -327,17 +330,12 @@ def InvoiceDetail(request, pk):
     count_product = product.count()
 
     total = product.aggregate(total=Sum('total_price')).get('total')
-    quantity1 = product.filter(unit=1).aggregate(quantity=Sum('quantity')).get('quantity')
+    quantity1 = product.aggregate(quantity=Sum('quantity')).get('quantity')
     if quantity1:
         quantity1 = quantity1
     else:
         quantity1 = 0.0
-    quantity2 = product.filter(unit=12).aggregate(quantity=Sum('quantity')).get('quantity')
-    if quantity2:
-        quantity2 = quantity2
-    else:
-        quantity2 = 0.0
-    quantity = quantity1 + (quantity2 * 12)
+    quantity = quantity1
 
     if total:
         invoice.total = total
@@ -348,7 +346,7 @@ def InvoiceDetail(request, pk):
     for prod in product:
         products.append(prod.item.id)
 
-    form.fields['item'].queryset = Wool.objects.all().exclude(id__in=products).order_by('wool_name')
+    form.fields['item'].queryset = Wool.objects.all().order_by('wool_name')
 
     type_page = "list"
     page = "active"
@@ -378,7 +376,7 @@ def AddProductInvoice(request, pk):
     product = InvoiceItem.objects.filter(invoice=invoice).order_by('id')
     count_product = product.count()
 
-    form = InvoiceProductsForm(request.POST or None)
+
     formm = InvoiceProductsForm()
 
     type_page = "list"
@@ -395,18 +393,52 @@ def AddProductInvoice(request, pk):
         'count_product': count_product
     }
 
+    form = InvoiceProductsForm(request.POST or None)
     if form.is_valid():
-        quantity = form.cleaned_data.get("quantity") * form.cleaned_data.get("unit")
-        item = form.cleaned_data.get("item")
-        trans = item.quantity
-
-        # if trans >= quantity:
         obj = form.save(commit=False)
+        quantity = form.cleaned_data.get("quantity")
+        item = form.cleaned_data.get("item")
+        wool_color = form.cleaned_data.get("wool_color")
+        color_object = Color.objects.get(color_name=wool_color)
+        print(color_object)
+        wool_object = Wool.objects.get(wool_name=item)
+        print(wool_object)
+        total_weight = form.cleaned_data.get("total_weight")
         obj.invoice = invoice
-        obj.save()
+        obj.item = wool_object
+        obj.wool_color = color_object
+
+        # filter woolcolor object based on data from user
+        wool_color_object = WoolColor.objects.filter(wool=wool_object, color=color_object)
+        # return just id's for woolcolor object using values_list method
+        wool_color_object_id = wool_color_object.values_list('id', flat=True)
+        # check if found id's or not
+        if wool_color_object_id:
+            # convert queryset to list
+            wool_color_object_id_list = list(wool_color_object_id)
+            # get object using id
+            color_wool_id = WoolColor.objects.get(id=wool_color_object_id_list[0])
+            # check if id not = none and update data for color
+            if color_wool_id != None:
+                if float(quantity) <= color_wool_id.count:
+                    obj.quantity = quantity
+                    obj.total_weight = total_weight
+                else:
+                    obj.quantity = color_wool_id.count
+                    obj.total_weight = color_wool_id.weight
+                # print(wool_color_object_id)
+                if color_wool_id.count >= float(quantity) and color_wool_id.weight >= float(total_weight):
+                    color_wool_id.count -= float(quantity)
+                    color_wool_id.weight -= float(total_weight)
+                    color_wool_id.save()
+                    obj.save()
+                else:
+                    obj.save()
+                    color_wool_id.delete()
+
         messages.success(request, " تم اضافة منتج الي الفاتورة بنجاح ", extra_tags="success")
-        # else:
-        #     messages.success(request, " لاتوجد كمية كافية من المنتج داخل المخزن ", extra_tags="danger")
+    # else:
+    #     messages.success(request, " لاتوجد كمية كافية من المنتج داخل المخزن ", extra_tags="danger")
         return redirect('Invoices:InvoiceDetail', pk=invoice.id)
 
     return render(request, 'Invoices/invoice_detail.html', context)
@@ -428,17 +460,16 @@ class InvoiceProductsUpdate(LoginRequiredMixin, UpdateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class=self.form_class)
-        form.fields['item'].queryset = Product.objects.filter(id=self.object.item.id)
+        form.fields['item'].queryset = Wool.objects.filter(id=self.object.item.id)
         return form
 
     def get_success_url(self, **kwargs):
         return reverse('Invoices:InvoiceDetail', kwargs={'pk': self.kwargs['id']})
 
     def form_valid(self, form):
-        quantity = form.cleaned_data.get("quantity") * form.cleaned_data.get("unit")
+        quantity = form.cleaned_data.get("quantity")
         unit_price = form.cleaned_data.get("unit_price")
         item = form.cleaned_data.get("item")
-        trans = item.quantity
         object_item = self.object.item
 
         # if trans >= quantity:
@@ -484,6 +515,32 @@ class InvoiceProductsDelete(LoginRequiredMixin, UpdateView):
         object_item = self.object.item
         messages.success(self.request, " تم حذف المنتج " + str(object_item) + " من الفاتورة بنجاح ", extra_tags="success")
         my_form = InvoiceItem.objects.get(id=self.kwargs['pk'])
+        wool_object = Wool.objects.get(id=my_form.item.id)
+
+        # filter woolcolor object based on data from user
+        wool_color_object = WoolColor.objects.filter(wool=wool_object, color=my_form.wool_color)
+        # return just id's for woolcolor object using values_list method
+        wool_color_object_id = wool_color_object.values_list('id', flat=True)
+        # check if found id's or not
+        if wool_color_object_id:
+            # convert queryset to list
+            wool_color_object_id_list = list(wool_color_object_id)
+            # get object using id
+            color_wool_id = WoolColor.objects.get(id=wool_color_object_id_list[0])
+            # check if id not = none and update data for color
+            if color_wool_id != None:
+                print(wool_color_object_id)
+                color_wool_id.count += my_form.quantity
+                color_wool_id.weight += my_form.total_weight
+                color_wool_id.save()
+        else:
+            wool_color_object = WoolColor()
+            wool_color_object.wool = wool_object
+            wool_color_object.color = my_form.wool_color
+            wool_color_object.count = my_form.quantity
+            wool_color_object.weight = my_form.total_weight
+            wool_color_object.save()
+
         my_form.delete()
         return redirect(self.get_success_url())
 

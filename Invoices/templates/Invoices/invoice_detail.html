@@ -169,6 +169,27 @@
                                                                     </span>
                                                                     </td>
                                                                 </tr>
+                                                                 <tr>
+                                                                    <th scope="row"> <i class='bx bx-calendar bx-sm' style='color:#556ee6'  ></i> تاريخ الشيك : </th>
+                                                                    <td>
+                                                                        {% if invoice.check_date %}
+                                                                            {{ invoice.check_date|date:'Y-m-d' }}
+                                                                        {% else %}
+                                                                            لا يوجد
+                                                                        {% endif %}
+                                                                    </td>
+
+                                                                    <tr>
+                                                                        <th scope="row"><i class='bx bx-bookmark-minus bx-sm' style='color:#556ee6'  ></i> قيمة الشيك :</th>
+                                                                         <td>
+                                                                            {% if invoice.check_value %}
+                                                                                {{ invoice.check_value}}  ج
+                                                                            {% else %}
+                                                                                0.0 ج
+                                                                            {% endif %}
+                                                                        </td>
+                                                                    </tr>
+                                                                 </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -236,10 +257,13 @@
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">
                                                                         {{form.item|as_crispy_field}}
                                                                     </th>
-                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_color|as_crispy_field}} </th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2" style="width: 30%;">
+                                                                        {{ form.wool_color|as_crispy_field }}
+                                                                    </th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_weight|as_crispy_field}} </th>
-                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.unit_price|as_crispy_field}}</th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.quantity|as_crispy_field}} </th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.unit_price|as_crispy_field}}</th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.total_weight|as_crispy_field}} </th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.total_price|as_crispy_field}} </th>
                                                                     {% if not invoice.saved %}
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">
@@ -262,11 +286,12 @@
                                                                     <tr>
                                                                         <th>م</th>
                                                                         <th>الصنف</th>
-                                                                        <th>سعر البيع</th>
-                                                                        <th>الكمية</th>
                                                                         <th>اللون</th>
-                                                                        <th>الوزن</th>
-                                                                        <th>الاجمالي</th>
+                                                                        <th>وزن الوحدة</th>
+                                                                        <th>الكمية</th>
+                                                                        <th>سعر البيع</th>
+                                                                        <th>اجمالي الوزن</th>
+                                                                        <th>اجمالي الحساب</th>
                                                                         {% if request.user.is_superuser %}
                                                                         {% if not invoice.saved %}
                                                                         <th></th>
@@ -286,25 +311,33 @@
                                                                         </td>
                                                                         <td>
                                                                             <span class="badge badge-pill badge-soft-success font-size-12 text-danger">
-                                                                                <i class='bx bx-dollar'></i> {{ x.unit_price|floatformat:2 }}
+                                                                                  {{ x.wool_color}}
                                                                             </span>
                                                                         </td>
                                                                         <td>
-                                                                            {{x.quantity|floatformat:0}}
+                                                                            {{x.wool_weight}}
                                                                         </td>
+
                                                                         <td>
-                                                                            {{x.get_unit_display}}
+                                                                                {{ x.quantity}}
                                                                         </td>
+
                                                                         <td>
-                                                                            <span class="badge badge-pill badge-soft-success font-size-12 text-danger">
-                                                                                <i class='bx bx-dollar'></i> {{ x.total_price|floatformat:2 }}
-                                                                            </span>
+                                                                                {{ x.unit_price}}
+                                                                        </td>
+
+                                                                        <td>
+                                                                                {{ x.total_weight}}
+                                                                        </td>
+
+                                                                        <td>
+                                                                                {{ x.total_price}}
                                                                         </td>
                                                                         {% if request.user.is_superuser %}
                                                                         {% if not invoice.saved %}
                                                                         <td>
                                                                             {% if request.user.is_superuser %}
-                                                                            <a href="{% url 'Invoices:InvoiceProductsUpdate' x.id x.invoice.id %}" class="mr-3 text-primary" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>
+{#                                                                            <a href="{% url 'Invoices:InvoiceProductsUpdate' x.id x.invoice.id %}" class="mr-3 text-primary" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}
                                                                             <a href="{% url 'Invoices:InvoiceProductsDelete' x.id x.invoice.id  %}" class="text-danger" data-target="#action_modal" data-toggle="modal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"></i></a>
                                                                             {% endif %}
                                                                         </td>
@@ -592,6 +625,54 @@
             width: '100%'
         });
         $('#product').select2();
+
+        $('#item').on('change', function(){
+            e = this.value;
+            //console.log("this id for wool" + e)
+            $.ajax({
+                url: "{% url 'Factories:FactoryOutSide_color_filter' %}?e=" + e,
+                success: function (data) {
+                    let selectElement = document.getElementById('wool_color');
+                        selectElement.innerHTML = '';
+                        selectElement.val = '';
+                    if (data.wool_color_objects != 0) {
+                        //console.log(data.wool_color_objects)
+                        // Select the existing select input by its ID
+                        let selectElement = document.getElementById('wool_color');
+                        selectElement.innerHTML = '';
+                        selectElement.val = '';
+
+                        // Loop through the object properties
+                        for (let key in data.wool_color_objects) {
+                            //console.log(key)
+                            if (data.wool_color_objects.hasOwnProperty(key)) {
+                                // Create an option element
+                                let nestedData =  data.wool_color_objects[key];
+                                let color_name = nestedData.color__color_name;  // Access the 'name' property
+                                let color_id = nestedData.color__id;
+                                let color_cont_item = nestedData.wcount;
+                                let color_weight_item = nestedData.qcount;
+
+                                let optionElement = document.createElement('option');
+
+                                // Set the option value and text
+                                optionElement.value = color_id;
+                                optionElement.textContent = color_name +  '/' + ' ' + color_cont_item + 'ش' +  '/' + ' ' + color_weight_item + 'ك';
+                                // Append the option to the select element
+                                selectElement.appendChild(optionElement);
+                            }
+                        };
+                    } else {
+                        //console.log("no color for this item")
+                        // set the select element to null value if we not found color values for wool
+                        let selectElement = document.getElementById('wool_color');
+                        selectElement.innerHTML = '';
+                        selectElement.val = '';
+                    }
+                }
+            });
+        });
+
     });
 </script>
 
@@ -607,8 +688,17 @@
     $( '#quantity' ).on('change keyup', function () {
         var quantity = parseFloat(this.value);
         var unit_price = parseFloat($('#unit_price').val());
+        var wool_weight = parseFloat($('#wool_weight').val());
         $('#total_price').val(unit_price*quantity);
+        $('#total_weight').val(wool_weight*quantity);
     });
+
+    $( '#wool_weight' ).on('change keyup', function () {
+        var wool_weight = parseFloat(this.value);
+        var quantity = parseFloat($('#quantity').val());
+        $('#total_weight').val(wool_weight*quantity);
+    });
+
 
 </script>
 {% endblock js %}

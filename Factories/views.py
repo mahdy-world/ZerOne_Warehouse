@@ -578,7 +578,7 @@ def FactoryOutSideCreate(request):
         percent_loss = request.POST.get('percent_loss')
         weight_after_loss = request.POST.get('weight_after_loss')
         color = request.POST.get('color')
-        color_object = Color.objects.get(id=color)
+        color_object = Color.objects.get(colo=color)
         wool_object = Wool.objects.get(id=wool)
 
         if factory_id and date and weight and percent_loss and weight_after_loss:

@@ -37,7 +37,7 @@
 
 
                                 <h4 class="mb-0">
-                                     التاجر {{seller.name}}
+                                     العميل {{seller.name}}
                                      <a class="badge badge-success" style="font-size:small;" href="{% url 'Products:SellerCreate' %}" data-toggle="modal" data-target="#action_modal">
                                             <i class="fas fa-plus-square fx-2"></i>
                                     </a>
@@ -60,13 +60,13 @@
 
                                     <li class="breadcrumb-item">
                                         {% if seller.deleted %}
-                                        <a href="{% url 'Products:SellerTrashList' %}">قائمة التجار المحذوفة</a>
+                                        <a href="{% url 'Products:SellerTrashList' %}">قائمة العملاء المحذوفة</a>
                                         {% else %}
-                                        <a href="{% url 'Products:SellerList' %}">قائمة التجار</a>
+                                        <a href="{% url 'Products:SellerList' %}">قائمة العملاء</a>
                                         {% endif %}
                                     </li>
 
-                                    <li class="breadcrumb-item active"> التاجر {{seller.name}}</li>
+                                    <li class="breadcrumb-item active"> العميل {{seller.name}}</li>
                                 </ol>
                             </div>
 
@@ -84,7 +84,7 @@
                                 <div class="col-lg-4">
                                     <span class="font-weight-bold  font-size-14" >
                                         <i class="fas fa-paragraph"></i>
-                                        أسم التاجر:
+                                        أسم العميل:
                                     </span>
                                     {{seller.name}}
                                 </div>
@@ -92,7 +92,7 @@
                                 <div class="col-lg-4">
                                     <span class="font-weight-bold font-size-14" >
                                         <i class="fas fa-phone"></i>
-                                        رقم الهاتف:
+                                        رقم العميل:
                                     </span>
                                     {{seller.phone}}
                                 </div>
@@ -186,12 +186,12 @@
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <a href="{% url 'Products:PaidSellerValue' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
-                                                                      <span class="btn btn-outline-secondary"><i class='bx bx-money' ></i>استلام مبلغ من التاجر</span>
+                                                                      <span class="btn btn-outline-secondary"><i class='bx bx-money' ></i>استلام مبلغ من العميل</span>
                                                                     </a>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <a href="{% url 'Products:PaidSellerValue2' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
-                                                                      <span class="btn btn-outline-secondary"><i class='bx bx-money' ></i>تسليم مبلغ الي التاجر</span>
+                                                                      <span class="btn btn-outline-secondary"><i class='bx bx-money' ></i>تسليم مبلغ الي العميل</span>
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -286,16 +286,16 @@
                                                     جنيه
                                                     {% if seller.initial_balance_debit %}
                                                     {% if seller.initial_balance_type == 1 %}
-                                                    للتاجر
+                                                    للعميل
                                                     {% else %}
-                                                    علي التاجر
+                                                    علي العميل
                                                     {% endif %}
                                                     {% endif %}
                                                     </p>
                                                 </div>
                                                 <div class="col-md-4 text-center">
                                                     <p class="btn btn-block btn-success">
-                                                    التاجر دفع لك:
+                                                    العميل دفع لك:
                                                     {% if from.sum %}
                                                     {{ from.sum|floatformat:2 }}
                                                     {% else %}
@@ -306,7 +306,7 @@
                                                 </div>
                                                 <div class="col-md-4 text-center">
                                                     <p class="btn btn-block btn-danger">
-                                                    أنت دفعت للتاجر:
+                                                    أنت دفعت للعميل:
                                                     {% if to.sum %}
                                                     {{ to.sum|floatformat:2 }}
                                                     {% else %}

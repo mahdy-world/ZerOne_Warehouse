@@ -29,7 +29,7 @@
     <dl id="informations" style="margin-top: -50px">
         <h2 class="text-center">{{system_info.name}}</h2>
         <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span>تاريخ التقرير: </h5>
-        <h5 style="margin-top: -15px"><span> {{seller.name}} </span>كشف حساب التاجر: </h5>
+        <h5 style="margin-top: -15px"><span> {{seller.name}} </span>كشف حساب العميل: </h5>
     </dl><hr>
 
     {% if check0 == 'check0' %}
@@ -68,20 +68,20 @@
             عربون افتتاحي
             {% if initial_debit > 0 %}
                 {% if seller.initial_balance_type == 1 %}
-                للتاجر
+                للعميل
                 {% else %}
-                علي التاجر
+                علي العميل
                 {% endif %}
             {% endif %}
             </th>
         </tr>
         <tr>
             <th>{{ payments_from|floatformat:2 }} جنيه</th>
-            <th>القيمة المستلمة من التاجر</th>
+            <th>القيمة المستلمة من العميل</th>
         </tr>
         <tr>
             <th>{{ payments_to|floatformat:2 }} جنيه</th>
-            <th>القيمة المسلمة الي التاجر</th>
+            <th>القيمة المسلمة الي العميل</th>
         </tr>
         <tr>
             <th>
@@ -95,9 +95,9 @@
             الباقي
             {% if payment_sum != 0 %}
                 {% if payment_sum < 0 %}
-                للتاجر
+                للعميل
                 {% else %}
-                علي التاجر
+                علي العميل
                 {% endif %}
             {% endif %}
             </th>
@@ -263,7 +263,7 @@
     {% endif %}
 
     {% if check3 == 'check3' %}
-    <h4 style="text-align: right; text-decoration: underline">المبالغ المستلمة من التاجر</h4>
+    <h4 style="text-align: right; text-decoration: underline">المبالغ المستلمة من العميل</h4>
     <table>
       <thead>
         <tr>
@@ -297,7 +297,7 @@
     {% endif %}
 
     {% if check4 == 'check4' %}
-    <h4 style="text-align: right; text-decoration: underline">المبالغ المسلمة الي التاجر</h4>
+    <h4 style="text-align: right; text-decoration: underline">المبالغ المسلمة الي العميل</h4>
     <table>
       <thead>
         <tr>

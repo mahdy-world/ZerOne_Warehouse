@@ -527,7 +527,7 @@
     
                     // sum itmes method 
                     items_total = api
-                        .column(6)
+                        .column(5)
                         .data()
                         .reduce(function (a, b){
                             return intVal(a) + intVal(b);
@@ -535,7 +535,7 @@
                     
                     // sum items from current page method
                     items_total_page = api
-                        .column(6, {page:'current'})
+                        .column(5, {page:'current'})
                         .data()
                         .reduce(function (a, b){
                             return intVal(a) + intVal(b);
@@ -543,14 +543,14 @@
                     
                     
                     total = api
-                        .column(7)
+                        .column(8)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
     
                     pageTotal = api
-                        .column(7, { page: 'current' })
+                        .column(8, { page: 'current' })
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
@@ -571,9 +571,9 @@
                         }, 0);
     
                     // total number position on the footer
-                    $(api.column(7).footer()).html('' + pageTotal.toFixed(2) + ' ( من ' + total.toFixed(2) + ' )');
+                    $(api.column(8).footer()).html('' + pageTotal.toFixed(2) + ' ( من ' + total.toFixed(2) + ' )');
                     $(api.column(9).footer()).html('' + pageTotal2.toFixed(3) + ' ( من ' + total2.toFixed(3) + ' )');
-                    $(api.column(6).footer()).html('' + items_total_page.toFixed(2) + ' ( من ' + items_total.toFixed(2) + ' )');
+                    $(api.column(5).footer()).html('' + items_total_page.toFixed(2) + ' ( من ' + items_total.toFixed(2) + ' )');
                 },
     
                 "columnDefs": [ {
@@ -588,7 +588,7 @@
                         extend: 'print',
                         text: 'طباعة الجدول',
                         exportOptions: {
-                            columns: [ 0, 1, 6, 7, 9],
+                            columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                             modifier: {
                                 page: 'current'
                             }
@@ -622,7 +622,7 @@
                                 var model = 'فلترة بلون معين: جميع الأنواع';
                             }
                             else {
-                                var model = 'فلترة بنوع خام معين: ' + $("#ModelFltr_color").val();
+                                var model = 'فلترة بلون خام معين: ' + $("#ModelFltr_color").val();
                             }
     
                             if ( $("#ModelFltr_wool_name").val() == ' ' ) {
@@ -739,7 +739,7 @@
                     });
     
                     // filter using wool color
-                    this.api().columns([5]).every(function () {
+                    this.api().columns([4]).every(function () {
                         var color_column = this;
                         console.log(color_column);
                         var color_select = $("#ModelFltr_color");

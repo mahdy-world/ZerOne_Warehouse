@@ -56,17 +56,17 @@ class Product(models.Model):
 
 
 Balance_Type = (
-    (1, "للتاجر"),
-    (2, "علي التاجر"),
+    (1, "للعميل"),
+    (2, "علي العميل"),
     )
 
 Paid_Type = (
-    (1, "التاجر يدفع لك"),
-    (2, "أنت تدفع للتاجر"),
+    (1, "العميل يدفع لك"),
+    (2, "أنت تدفع للعميل"),
     )
 
 class ProductSellers(models.Model):
-    name = models.CharField(max_length=250, verbose_name='اسم التاجر')
+    name = models.CharField(max_length=250, verbose_name='اسم العميل')
     phone = models.CharField(max_length=11, null=True, blank=True, verbose_name='رقم الهاتف')
     address = models.CharField(max_length=250, verbose_name='العنوان', null=True, blank=True)
     nation_no = models.CharField(max_length=14, verbose_name='الرقم القومي', null=True, blank=True)
@@ -80,7 +80,7 @@ class ProductSellers(models.Model):
 
 
 class SellerPayments(models.Model):
-    seller = models.ForeignKey(ProductSellers, on_delete=models.CASCADE, null=True, verbose_name='التاجر')
+    seller = models.ForeignKey(ProductSellers, on_delete=models.CASCADE, null=True, verbose_name='العميل')
     paid_value = models.FloatField(default=0.0, verbose_name='القيمة المدفوعة')
     paid_reason = models.CharField(max_length=250, null=True, blank=True, verbose_name='الوصف/السبب')
     paid_type = models.IntegerField(choices=Paid_Type, default=0, verbose_name="نوع الدفع")

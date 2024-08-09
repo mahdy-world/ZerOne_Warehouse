@@ -36,7 +36,7 @@
                         <div class="page-title-box d-flex align-items-center justify-content-between">
 
                             {% if type == "list" %}
-                                <h4 class="mb-0"> قائمة التجار
+                                <h4 class="mb-0"> قائمة العملاء
                                     <a class="badge badge-success" style="font-size:small;" href="{% url 'Products:SellerCreate' %}" data-toggle="modal" data-target="#action_modal">
                                             <i class="fas fa-plus-square fx-2"></i>
                                     </a>
@@ -52,7 +52,7 @@
                                  </h4>
 
                                 {% else %}
-                                <h4 class="mb-0"> سلة مهملات التجار
+                                <h4 class="mb-0"> سلة مهملات العملاء
                                     <a class="badge badge-success" style="font-size:small;" href="{% url 'Products:SellerCreate' %}" data-toggle="modal" data-target="#action_modal">
                                             <i class="fas fa-plus-square fx-2"></i>
                                     </a>
@@ -80,9 +80,9 @@
                                     <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
 
                                     {% if type == "list" %}
-                                    <li class="breadcrumb-item active">قائمة التجار</li>
+                                    <li class="breadcrumb-item active">قائمة العملاء</li>
                                     {% else %}
-                                    <li class="breadcrumb-item active">قائمة التجار المحذوفة</li>
+                                    <li class="breadcrumb-item active">قائمة العملاء المحذوفة</li>
                                     {% endif %}
                                 </ol>
                             </div>
@@ -103,7 +103,7 @@
                                 <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SellerSearch' %}">
                                     <div class="position-relative" >
 
-                                        <input type="text" style="background-color: white" value="{{seller_serach}}" list="sel" autocomplete="off" class="form-control" name="seller" placeholder="بحث ... بإسم التاجر">
+                                        <input type="text" style="background-color: white" value="{{seller_serach}}" list="sel" autocomplete="off" class="form-control" name="seller" placeholder="بحث ... بإسم العميل">
                                         <span >
                                             <button class="bx bx-search-alt btn btn-warning" type="submit">
                                             </button>
@@ -189,7 +189,7 @@
                                                   {% if sellers_debit_val == 0 %}
                                                     <span class="badge badge-danger"><i class='bx bxs-trash'  ></i>حذف</span>
                                                   {% else %}
-                                                    <span class="badge badge-danger" style="text-decoration: line-through;" data-placement="top" title="لايمكن الحذف .. التاجر لديه حسابات مالية لم تنتهي"><i class='bx bxs-trash' ></i>حذف</span>
+                                                    <span class="badge badge-danger" style="text-decoration: line-through;" data-placement="top" title="لايمكن الحذف .. العميل لديه حسابات مالية لم تنتهي"><i class='bx bxs-trash' ></i>حذف</span>
                                                   {% endif %}
                                               </a>
                                           </div>
@@ -259,11 +259,11 @@
                           <div class="row">
                               <div class="col-md-12">
                                   <input type="checkbox" id="check3" name="check3" value="check3" style="transform: scale(2)">
-                                  <label for="check3" style="margin-right: 10px">المبالغ المستلمة من التاجر</label>
+                                  <label for="check3" style="margin-right: 10px">المبالغ المستلمة من العميل</label>
                               </div>
                               <div class="col-md-12">
                                   <input type="checkbox" id="check4" name="check4" value="check4" style="transform: scale(2)">
-                                  <label for="check4" style="margin-right: 10px">المبالغ المسلمة الي التاجر</label>
+                                  <label for="check4" style="margin-right: 10px">المبالغ المسلمة الي العميل</label>
                               </div>
                           </div>
                       </div>

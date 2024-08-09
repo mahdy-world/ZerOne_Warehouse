@@ -24,11 +24,14 @@ class InvoiceSaveForm(forms.ModelForm):
     class Meta:
         model = Invoice
         # fields = ['old_value', 'total', 'discount', 'return_value', 'paid_value', 'overall', 'comment']
-        fields = ['old_value', 'total', 'discount', 'paid_value', 'overall', 'comment']
+        fields = ['check_date', 'check_value', 'old_value', 'total', 'discount', 'paid_value', 'overall', 'comment']
         widgets = {
+            'check_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'id': 'check_date'}),
+            'check_value': forms.NumberInput(attrs={'class': 'form-control', 'id': 'check_value'}),
             'total': forms.NumberInput(attrs={'class': 'form-control', 'id': 'inv_total', 'readonly': 'readonly', 'min':0}),
             'old_value': forms.NumberInput(attrs={'class': 'form-control', 'id': 'inv_old_value', 'readonly': 'readonly'}),
             'overall': forms.HiddenInput(attrs={'class': 'form-control', 'id': 'inv_overall', 'readonly': 'readonly', 'min':0}),
+
         }
 
     def __init__(self, *args, **kwargs):
@@ -93,12 +96,12 @@ class InvoiceCloseForm(forms.ModelForm):
 class InvoiceProductsForm(forms.ModelForm):
     class Meta:
         model = InvoiceItem
-        fields = ['item', 'unit_price', 'quantity', 'unit', 'total_price', 'wool_weight', 'wool_color']
+        fields = ['item', 'unit_price', 'quantity', 'total_price', 'wool_weight', 'wool_color', 'total_weight']
         widgets = {
             'item': forms.Select(attrs={'class': 'form-control', 'id': 'item'}),
             'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'quantity'}),
             'wool_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_weight'}),
-            'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
+            'total_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_weight'}),
             'wool_color': forms.Select(attrs={'class': 'form-control', 'id': 'wool_color'}),
             'unit_price': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'unit_price'}),
             'total_price': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_price', 'readonly': 'readonly'}),
@@ -121,13 +124,16 @@ class InvoiceProductsForm(forms.ModelForm):
 class InvoiceProductsFormUpdate(forms.ModelForm):
     class Meta:
         model = InvoiceItem
-        fields = ['item', 'unit_price', 'quantity', 'unit', 'total_price']
+        fields = ['item', 'unit_price', 'quantity', 'total_price', 'wool_weight', 'wool_color', 'total_weight']
         widgets = {
-            'item': forms.Select(attrs={'class': 'form-control', 'id': 'item', 'readonly': 'readonly'}),
+            'item': forms.Select(attrs={'class': 'form-control', 'id': 'item'}),
             'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'quantity'}),
-            'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
+            'wool_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'wool_weight'}),
+            'total_weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_weight'}),
+            'wool_color': forms.Select(attrs={'class': 'form-control', 'id': 'wool_color'}),
             'unit_price': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'unit_price'}),
-            'total_price': forms.HiddenInput(attrs={'class': 'form-control', 'min': '1', 'id': 'total_price', 'readonly': 'readonly'}),
+            'total_price': forms.NumberInput(
+                attrs={'class': 'form-control', 'min': '1', 'id': 'total_price', 'readonly': 'readonly'}),
         }
 
     def __init__(self, *args, **kwargs):
