@@ -558,17 +558,13 @@ def PrintInvoice(request, id):
     product = InvoiceItem.objects.filter(invoice=invoice).order_by('id')
     count_product = product.count()
 
-    quantity1 = product.filter(unit=1).aggregate(quantity=Sum('quantity')).get('quantity')
+    quantity1 = product.aggregate(quantity=Sum('quantity')).get('quantity')
     if quantity1:
         quantity1 = quantity1
     else:
         quantity1 = 0.0
-    quantity2 = product.filter(unit=12).aggregate(quantity=Sum('quantity')).get('quantity')
-    if quantity2:
-        quantity2 = quantity2
-    else:
-        quantity2 = 0.0
-    quantity = quantity1 + (quantity2 * 12)
+   
+    quantity = quantity1 
 
     context = {
         'date': date,

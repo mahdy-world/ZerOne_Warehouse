@@ -77,3 +77,27 @@ class WoolSupplierPayment(models.Model):
 
     def __str__(self):
         return self.supplier.name
+    
+
+
+OPERATION_TYPE = (
+    (1,"دخول عن طريق مورد"),
+    (2,"خروج كمية لفاتورة مبيعات"),
+    (3,"دخول مرتجع للمخزن"),
+    (4,"حذف كمية بشكل يدوي")
+)
+
+    
+class WoolOperatoin(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ العملية")
+    operation_type = models.IntegerField(choices=OPERATION_TYPE, verbose_name='نوع العملية')
+    operation_wool =  models.ForeignKey(Wool, on_delete=models.CASCADE, verbose_name='الخامة')
+    operation_count = models.FloatField(default=0.0, verbose_name="الكمية")
+    operatoin_color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name="اللون")
+    operation_total_weight = models.FloatField(default=0.0, verbose_name="اجمالي الوزن")
+    created_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسؤول")
+
+    def __str__(self):
+        return self.created_date
+    
+    
