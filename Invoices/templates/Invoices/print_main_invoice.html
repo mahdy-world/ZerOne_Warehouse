@@ -75,11 +75,9 @@
             </span>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <span>
-                المطلوب من
+                اسم العميل
                 {% if invoice.seller %}
-                السيد
-                {% else %}
-                العميل
+                الاستاذ
                 {% endif %}
                 /
                 {% if invoice.seller %}
@@ -211,7 +209,7 @@
                     </td>
                 </tr>
 
-                {% if invoice.invoice_type == 1 %}
+                {% if invoice.invoice_type == 1  %}
                     <tr style="background-color:transparent">
                         <td
                             style="background-color:white; color: black; border-left: none; border-bottom: none; border-right: none">
@@ -261,11 +259,12 @@
                         style="background-color:white; color: black; border-left: none; border-bottom: none; border-right: none">
                         <span style="background-color: black; padding: 5px; color: white">
                            
-                            {% if invoice.overall < 0 %}  {{
-                                invoice.overall|mul:-1|floatformat:2 }} للعميل {% elif invoice.overall > 0 %}
-                                {{ invoice.overall|floatformat:2 }}  علي العميل 
+                            {% if invoice.overall < 0 %}  
+                                {{invoice.overall|mul:-1|floatformat:2 }} للعميل 
+                                {% elif invoice.overall > 0 %}
+                                    {{ invoice.overall|floatformat:2 }}  علي العميل 
                                 {% else %}
-                                {{ invoice.overall|floatformat:2 }}
+                                    {{ invoice.overall|floatformat:2 }}
                                 {% endif %}
                         </span>
                         &nbsp;&nbsp;&nbsp;

@@ -7,7 +7,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 import weasyprint
 
-from Wool.models import WoolColor
+from Wool.models import WoolColor, WoolOperatoin
 from .forms import *
 from django.contrib import messages
 from datetime import datetime
@@ -350,7 +350,8 @@ def InvoiceDetail(request, pk):
 
     type_page = "list"
     page = "active"
-    action_url = reverse_lazy('Invoices:AddProductInvoice', kwargs={'pk': invoice.id})
+    action_url_1 = reverse_lazy('Invoices:AddProductInvoice', kwargs={'pk': invoice.id})
+    action_url_2 = reverse_lazy('Invoices:AddProductInvoiceRturned', kwargs={'pk': invoice.id})
 
     # if int(invoice.invoice_type) == 1 or int(invoice.invoice_type) == 2:
     #     if invoice.seller.agreement:
@@ -360,7 +361,8 @@ def InvoiceDetail(request, pk):
         'type': type_page,
         'page': page,
         'form': form,
-        'action_url': action_url,
+        'action_url_1': action_url_1,
+        'action_url_2': action_url_2,
         'product': product,
         'count_product': count_product,
         'total': total,
@@ -381,14 +383,14 @@ def AddProductInvoice(request, pk):
 
     type_page = "list"
     page = "active"
-    action_url = reverse_lazy('Invoices:AddProductInvoice', kwargs={'pk': invoice.id})
+    action_url_1 = reverse_lazy('Invoices:AddProductInvoice', kwargs={'pk': invoice.id})
 
     context = {
         'invoice': invoice,
         'type': type_page,
         'page': page,
         'form': formm,
-        'action_url': action_url,
+        'action_url_1': action_url_1,
         'product': product,
         'count_product': count_product
     }
@@ -426,15 +428,127 @@ def AddProductInvoice(request, pk):
                 else:
                     obj.quantity = color_wool_id.count
                     obj.total_weight = color_wool_id.weight
-                # print(wool_color_object_id)
                 if color_wool_id.count >= float(quantity) and color_wool_id.weight >= float(total_weight):
                     color_wool_id.count -= float(quantity)
                     color_wool_id.weight -= float(total_weight)
                     color_wool_id.save()
                     obj.save()
+                    
+                    operation = WoolOperatoin()
+                    operation.operation_number = obj.id
+                    operation.operation_wool = wool_object
+                    operation.operation_color = form.cleaned_data['wool_color']
+                    operation.operation_type = 2 
+                    operation.operation_count = form.cleaned_data['quantity']
+                    operation.operation_total_weight = form.cleaned_data['total_weight']
+                    operation.operation_total_price = form.cleaned_data['total_price']
+                    operation.created_user = request.user
+                    operation.save()
                 else:
                     obj.save()
+                    operation = WoolOperatoin()
+                    operation.operation_number = obj.id
+                    operation.operation_wool = wool_object
+                    operation.operation_color = form.cleaned_data['wool_color']
+                    operation.operation_type = 2 
+                    operation.operation_count = form.cleaned_data['quantity']
+                    operation.operation_total_weight = form.cleaned_data['total_weight']
+                    operation.operation_total_price = form.cleaned_data['total_price']
+                    operation.created_user = request.user
+                    operation.save()
                     color_wool_id.delete()
+
+        messages.success(request, " تم اضافة منتج الي الفاتورة بنجاح ", extra_tags="success")
+    # else:
+    #     messages.success(request, " لاتوجد كمية كافية من المنتج داخل المخزن ", extra_tags="danger")
+        return redirect('Invoices:InvoiceDetail', pk=invoice.id)
+
+    return render(request, 'Invoices/invoice_detail.html', context)
+
+def AddProductInvoiceRturned(request, pk):
+    invoice = get_object_or_404(Invoice, id=pk)
+    product = InvoiceItem.objects.filter(invoice=invoice).order_by('id')
+    count_product = product.count()
+
+
+    formm = InvoiceProductsForm()
+
+    type_page = "list"
+    page = "active"
+    action_url_2 = reverse_lazy('Invoices:AddProductInvoiceRturned', kwargs={'pk': invoice.id})
+
+    context = {
+        'invoice': invoice,
+        'type': type_page,
+        'page': page,
+        'form': formm,
+        'action_url_2': action_url_2,
+        'product': product,
+        'count_product': count_product
+    }
+
+    form = InvoiceProductsForm(request.POST or None)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        quantity = form.cleaned_data.get("quantity")
+        item = form.cleaned_data.get("item")
+        wool_color = form.cleaned_data.get("wool_color")
+        color_object = Color.objects.get(color_name=wool_color)
+        wool_object = Wool.objects.get(wool_name=item)
+        total_weight = form.cleaned_data.get("total_weight")
+        obj.invoice = invoice
+        obj.item = wool_object
+        obj.wool_color = color_object
+
+        # filter woolcolor object based on data from user
+        wool_color_object = WoolColor.objects.filter(wool=wool_object, color=color_object)
+        # return just id's for woolcolor object using values_list method
+        wool_color_object_id = wool_color_object.values_list('id', flat=True)
+        # check if found id's or not
+        if wool_color_object_id:
+            # convert queryset to list
+            wool_color_object_id_list = list(wool_color_object_id)
+            # get object using id
+            color_wool_id = WoolColor.objects.get(id=wool_color_object_id_list[0])
+            # check if id not = none and update data for color
+            if color_wool_id != None:
+                obj.quantity = quantity
+                obj.total_weight = total_weight
+                color_wool_id.count += quantity
+                color_wool_id.weight += total_weight
+                color_wool_id.save()
+                obj.save()
+                    
+                operation = WoolOperatoin()
+                operation.operation_number = obj.id
+                operation.operation_wool = wool_object
+                operation.operation_color = form.cleaned_data['wool_color']
+                operation.operation_type = 3 
+                operation.operation_count = form.cleaned_data['quantity']
+                operation.operation_total_weight = form.cleaned_data['total_weight']
+                operation.operation_total_price = form.cleaned_data['total_price']
+                operation.created_user = request.user
+                operation.save()
+        else:
+            wool_color_object = WoolColor()
+            wool_color_object.wool = wool_object
+            wool_color_object.color = form.cleaned_data['wool_color']
+            wool_color_object.count = form.cleaned_data['quantity']
+            wool_color_object.weight = form.cleaned_data['total_weight']
+            wool_color_object.save()
+            
+            operation = WoolOperatoin()
+            operation.operation_number = obj.id
+            operation.operation_wool = wool_object
+            operation.operation_color = form.cleaned_data['wool_color']
+            operation.operation_type = 3 
+            operation.operation_count = form.cleaned_data['quantity']
+            operation.operation_total_weight = form.cleaned_data['total_weight']
+            operation.operation_total_price = form.cleaned_data['total_price']
+            operation.created_user = request.user
+            operation.save()
+            
+        obj.save()
 
         messages.success(request, " تم اضافة منتج الي الفاتورة بنجاح ", extra_tags="success")
     # else:
@@ -533,6 +647,9 @@ class InvoiceProductsDelete(LoginRequiredMixin, UpdateView):
                 color_wool_id.count += my_form.quantity
                 color_wool_id.weight += my_form.total_weight
                 color_wool_id.save()
+                
+                operation_obj = WoolOperatoin.objects.get(operation_number=self.kwargs['pk'], operation_type=2)
+                operation_obj.delete()
         else:
             wool_color_object = WoolColor()
             wool_color_object.wool = wool_object
@@ -540,8 +657,55 @@ class InvoiceProductsDelete(LoginRequiredMixin, UpdateView):
             wool_color_object.count = my_form.quantity
             wool_color_object.weight = my_form.total_weight
             wool_color_object.save()
-
+            operation_obj = WoolOperatoin.objects.get(operation_number=self.kwargs['pk'], operation_type=2)
+            operation_obj.delete()
+            
         my_form.delete()
+        return redirect(self.get_success_url())
+    
+    
+class InvoiceProductsDeleteReturned(LoginRequiredMixin, UpdateView):
+    login_url = '/auth/login/'
+    model = InvoiceItem
+    form_class = InvoiceProductsDeleteForm
+    template_name = 'forms/form_template.html'
+
+    def get_success_url(self):
+        return reverse('Invoices:InvoiceDetail', kwargs={'pk': self.kwargs['id']})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'حذف المنتج: ' + str(self.object.item)
+        context['message'] = 'super_delete'
+        context['action_url'] = reverse_lazy('Invoices:InvoiceProductsDeleteReturned', kwargs={'pk': self.object.id, 'id': self.object.invoice.id})
+        return context
+
+    def form_valid(self, form):
+        object_item = self.object.item
+        messages.success(self.request, " تم حذف المنتج " + str(object_item) + " من الفاتورة بنجاح ", extra_tags="success")
+        my_form = InvoiceItem.objects.get(id=self.kwargs['pk'])
+        wool_object = Wool.objects.get(id=my_form.item.id)
+
+        # filter woolcolor object based on data from user
+        wool_color_object = WoolColor.objects.filter(wool=wool_object, color=my_form.wool_color)
+        # return just id's for woolcolor object using values_list method
+        wool_color_object_id = wool_color_object.values_list('id', flat=True)
+        # check if found id's or not
+        if wool_color_object_id:
+            # convert queryset to list
+            wool_color_object_id_list = list(wool_color_object_id)
+            # get object using id
+            color_wool_id = WoolColor.objects.get(id=wool_color_object_id_list[0])
+            # check if id not = none and update data for color
+            if color_wool_id != None:
+                if color_wool_id.count >= float(my_form.quantity) and color_wool_id.weight >= float(my_form.total_weight):
+                    color_wool_id.count -= float(my_form.quantity)
+                    color_wool_id.weight -= float(my_form.total_weight)
+                    color_wool_id.save()
+                    my_form.delete()
+                else:
+                    my_form.delete()
+                    color_wool_id.delete()
         return redirect(self.get_success_url())
 
 

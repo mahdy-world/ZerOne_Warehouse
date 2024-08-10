@@ -60,7 +60,7 @@ def qrcode(*args):
 
 @register.simple_tag(name='invoice_products_count')
 def invoice_products_count(inv_id):
-    products_count = InvoiceItem.objects.filter(invoice__id=inv_id).aggregate(sum=Sum(F('quantity') * F('unit'))).get('sum')
+    products_count = InvoiceItem.objects.filter(invoice__id=inv_id).aggregate(sum=Sum(F('quantity'))).get('sum')
     if products_count:
         products_count = int(products_count)
     else:

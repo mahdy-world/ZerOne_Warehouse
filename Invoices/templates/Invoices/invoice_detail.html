@@ -128,7 +128,7 @@
                                                                 <tr>
                                                                     <th scope="row"><i class='bx bx-user-pin bx-sm' style='color:#556ee6' ></i>
                                                                         {% if invoice.seller %}
-                                                                        التاجر
+                                                                        العميل
                                                                         {% else %}
                                                                         العميل
                                                                         {% endif %}
@@ -251,7 +251,14 @@
                                                     <div class="table-responsive" id="order_list">
                                                         <table class="table table-nowrap mb-0">
                                                             <thead>
-                                                                <form method="post" action="{{action_url}}">
+                                                                <form method="post" 
+                                                                
+                                                                {% if invoice.invoice_type == 1 %}
+                                                                    action="{{action_url_1}}"
+                                                                {% elif invoice.invoice_type == 2 %}
+                                                                     action="{{action_url_2}}"
+                                                                {% endif %}
+                                                                >
                                                                 {% csrf_token %}
                                                                 <tr>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">
@@ -337,8 +344,14 @@
                                                                         {% if not invoice.saved %}
                                                                         <td>
                                                                             {% if request.user.is_superuser %}
+                                                                                
+                                                                                {% if invoice.invoice_type == 2 %}
+                                                                                    <a href="{% url 'Invoices:InvoiceProductsDeleteReturned' x.id x.invoice.id  %}" class="text-danger" data-target="#action_modal" data-toggle="modal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"></i></a>
+                                                                                {% else %}
+                                                                                    <a href="{% url 'Invoices:InvoiceProductsDelete' x.id x.invoice.id  %}" class="text-danger" data-target="#action_modal" data-toggle="modal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"></i></a>
+
+                                                                                {% endif %}      
 {#                                                                            <a href="{% url 'Invoices:InvoiceProductsUpdate' x.id x.invoice.id %}" class="mr-3 text-primary" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}
-                                                                            <a href="{% url 'Invoices:InvoiceProductsDelete' x.id x.invoice.id  %}" class="text-danger" data-target="#action_modal" data-toggle="modal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"></i></a>
                                                                             {% endif %}
                                                                         </td>
                                                                         {% endif %}

@@ -122,7 +122,7 @@ def WoolDetails(request, pk):
         'quantity': quantity,
         'wool_color_filter': wool_color_filter,
         'wool_objects_supplier': wool_objects_supplier,
-        'wool_operation': WoolOperatoin.objects.all().order_by('-id')
+        'wool_operation': WoolOperatoin.objects.all().order_by('-created_date')
     }
     return render(request, 'Wool/wool_details.html', context)
 
@@ -148,9 +148,10 @@ def AddWoolQuantity(request, pk):
                 color_wool_id.count += form.cleaned_data['wool_item_count']
                 color_wool_id.weight += form.cleaned_data['total_weight']
                 color_wool_id.save()
-                operation = WoolOperatoin()
                 
+                operation = WoolOperatoin()
                 operation.operation_wool = wool_object
+                operation.operation_number = color_wool_id.id
                 operation.operation_color = form.cleaned_data['wool_color']
                 operation.operation_type = 1 
                 operation.operation_count = form.cleaned_data['wool_item_count']
@@ -167,6 +168,7 @@ def AddWoolQuantity(request, pk):
             wool_color_object.save()
             
             operation = WoolOperatoin()
+            operation.operation_number = wool_color_object.id
             operation.operation_wool = wool_object
             operation.operation_color = form.cleaned_data['wool_color']
             operation.operation_type = 1 
@@ -208,6 +210,7 @@ def DelWoolQuantity(request, pk):
                 color_wool_id.save()
                  
                 operation = WoolOperatoin()
+                operation.operation_number = color_wool_id.id
                 operation.operation_wool = quant.wool
                 operation.operation_color = quant.wool_color
                 operation.operation_type = 4 
@@ -218,6 +221,7 @@ def DelWoolQuantity(request, pk):
                 operation.save()
             else:
                 operation = WoolOperatoin()
+                operation.operation_number = color_wool_id.id
                 operation.operation_wool = quant.wool
                 operation.operation_color = quant.wool_color
                 operation.operation_type = 4 

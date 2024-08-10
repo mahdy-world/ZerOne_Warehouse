@@ -644,9 +644,9 @@ def PrintSellerInvoicesDetails(request, pk):
         payment_sum = (float(invoices_overall) - float(payments_from) + float(payments_to)) + float(initial_debit)
 
     invoices_items = InvoiceItem.objects.filter(invoice__seller=seller, invoice__invoice_type=1).order_by('-date', '-id')
-    invoices_items_sum = invoices_items.aggregate(sum=Sum(F('quantity') * F('unit'))).get('sum')
+    invoices_items_sum = invoices_items.aggregate(sum=Sum(F('quantity'))).get('sum')
     r_invoices_items = InvoiceItem.objects.filter(invoice__seller=seller, invoice__invoice_type=2).order_by('-date', '-id')
-    r_invoices_items_sum = r_invoices_items.aggregate(sum=Sum(F('quantity') * F('unit'))).get('sum')
+    r_invoices_items_sum = r_invoices_items.aggregate(sum=Sum(F('quantity'))).get('sum')
 
     if invoices_items_sum:
         invoices_items_sum = int(invoices_items_sum)

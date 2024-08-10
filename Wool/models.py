@@ -90,6 +90,7 @@ OPERATION_TYPE = (
     
 class WoolOperatoin(models.Model):
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ العملية")
+    operation_number = models.IntegerField(null=True, blank=True, verbose_name="رقم العملية")
     operation_type = models.IntegerField(choices=OPERATION_TYPE, verbose_name='نوع العملية')
     operation_wool =  models.ForeignKey(Wool, on_delete=models.CASCADE, verbose_name='الخامة')
     operation_count = models.FloatField(default=0.0, verbose_name="الكمية")

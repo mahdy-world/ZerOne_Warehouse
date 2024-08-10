@@ -61,7 +61,7 @@ def sellers_debit(seller_id):
 
 @register.simple_tag(name='product_12_quantity')
 def product_12_quantity(product_id):
-    prod = Product.objects.get(id=product_id)
+    prod = Wool.objects.get(id=product_id)
     if prod.quantity:
         quant = prod.quantity / 12
         if prod.quantity % 12 == 0:

@@ -451,7 +451,7 @@
                                                                 <div class="col-lg-12">
                                                                         <div class="card-body">
                                                                             <!-- filter -->
-                                                                            <div class="row">
+                                                                            <!-- <div class="row">
                                                                                 
                                                                                 <div class="col-md-3">
                                                                                     <div class="form-group sel" >
@@ -466,11 +466,12 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <br>
+                                                                            <br> -->
                                                                             <div class="table-responsive">
                                                                                 <table class="table table-centered table-nowrap text-center display" id="operation" style="width: 100%">
                                                                                     <thead class="thead-dark">
                                                                                         <tr>
+                                                                                            <th>رقم العملية</th>
                                                                                             <th>تاريخ العملية</th>
                                                                                             <th>وصف العملية</th>
                                                                                             <th>الكمية</th>
@@ -486,6 +487,21 @@
                                                                                         {% for e in wool_operation  %}
                                                                                         <tr style="text-align: center;">
                                                                                             <td>
+                                                                                                No: 
+                                                                                                {% if e.operation_type == 1 %}
+                                                                                                    01-1#:
+                                                                                                {% elif e.operation_type == 2 %}
+                                                                                                    01-2#:
+                                                                                                {% elif e.operation_type == 3 %}
+                                                                                                    01-3#:
+                                                                                                {% elif e.operation_type == 4 %}
+                                                                                                    01-4#:
+                                                                                                {% else %}
+                                                                                                    01-0#:
+                                                                                                {% endif %}
+                                                                                                {{e.operation_number}}
+                                                                                            </td>
+                                                                                            <td>
                                                                                                 {{e.created_date}}
                                                                                             </td>
 
@@ -495,6 +511,10 @@
                                                                                                 class="badge badge-pill badge-success" 
                                                                                                 {% elif e.operation_type == 4 %}
                                                                                                 class="badge badge-pill badge-danger"
+                                                                                                {% elif e.operation_type == 2 %}
+                                                                                                class="badge badge-pill badge-primary"
+                                                                                                {% elif e.operation_type == 3 %}
+                                                                                                class="badge badge-pill badge-warning"
                                                                                                 {% else %}
                                                                                                 {% endif %}  >
                                                                                                     {{e.get_operation_type_display}}
@@ -536,6 +556,7 @@
                                                                                     </tbody>
                                                                                     <tfoot>
                                                                                         <tr>
+                                                                                            <th></th>
                                                                                             <th></th>
                                                                                             <th></th>
                                                                                             <th></th>
