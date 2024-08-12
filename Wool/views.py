@@ -122,7 +122,7 @@ def WoolDetails(request, pk):
         'quantity': quantity,
         'wool_color_filter': wool_color_filter,
         'wool_objects_supplier': wool_objects_supplier,
-        'wool_operation': WoolOperatoin.objects.all().order_by('-created_date')
+        'wool_operation': WoolOperatoin.objects.filter(operation_wool=wool_object).order_by('-created_date')
     }
     return render(request, 'Wool/wool_details.html', context)
 
