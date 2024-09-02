@@ -162,7 +162,7 @@
                                                 </span> شكارة
                                             </td>
                                             <td>
-                                                <span class="badge badge-warning">{% if has_total_wool_weight %} {{ has_total_wool_weight }} {% else %} 00.0 {% endif %}
+                                                <span class="badge badge-warning">{% if has_total_wool_weight %} {{ has_total_wool_weight|floatformat:3 }} {% else %} 00.0 {% endif %}
                                                 </span> كيلو جرام
                                             </td>
                                             <td>

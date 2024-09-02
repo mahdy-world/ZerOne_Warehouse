@@ -190,15 +190,15 @@ table.dataTable thead .sorting_desc_disabled {
                                                                             {{x.reason}}
                                                                         </td>
                                                                         {% if request.user.is_superuser %}
-                                                                        {% if not supplier.deleted %}
+                                                                        
                                                                         <td>
-                                                                            {% if forloop.last %}
+                                                                            
                                                                             <a href="#" class="text-danger" data-toggle="modal" data-target="#DelModal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"
                                                                             onclick="document.getElementById('del_clck').href='{% url 'Wool:DelWoolSupplierPayment' x.id %}'"
                                                                             ></i></a>
-                                                                            {% endif %}
+                                                                           
                                                                         </td>
-                                                                        {% endif %}
+                                                                        
                                                                         {% endif %}
                                                                         <td>
                                                                             {{ x.admin }}

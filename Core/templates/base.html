@@ -1408,11 +1408,11 @@
 
                                                 {% if modules.seller_active %}
                                                 <div class="col-lg-6">
-                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن تاجر ...</span>
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن عميل ...</span>
                                                     <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SellerSearch' %}">
                                                         <div class="position-relative" >
                                                             
-                                                            <input type="text" value="{{seller_serach}}" list="sel" autocomplete="off" class="form-control" name="seller" placeholder="بحث ... بإسم التاجر">
+                                                            <input type="text" value="{{seller_serach}}" list="sel" autocomplete="off" class="form-control" name="seller" placeholder="بحث ... بإسم العميل">
                                                             <span >
                                                                 <button class="bx bx-search-alt btn btn-light" type="submit">
                                                                 </button>

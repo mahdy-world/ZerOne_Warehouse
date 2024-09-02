@@ -630,14 +630,15 @@
 
 {% block js %}
 
-<script>
+<SCRIPT type="text/javascript">
     $(document).ready(function() {
         $('#item').select2({
             width: '100%'
-        });$('#wool_color').select2({
+        });
+
+        $('#wool_color').select2({
             width: '100%'
         });
-        $('#product').select2();
 
         $('#item').on('change', function(){
             e = this.value;
@@ -687,23 +688,24 @@
         });
 
     });
-</script>
+</SCRIPT>
 
 
 
 <script>
     $( '#unit_price' ).on('change keyup', function () {
         var unit_price = parseFloat(this.value);
-        var quantity = parseFloat($('#quantity').val());
-        $('#total_price').val(unit_price*quantity);
+        var total_weight = parseFloat($('#total_weight').val());
+        $('#total_price').val(unit_price*total_weight);
     });
 
     $( '#quantity' ).on('change keyup', function () {
         var quantity = parseFloat(this.value);
         var unit_price = parseFloat($('#unit_price').val());
         var wool_weight = parseFloat($('#wool_weight').val());
-        $('#total_price').val(unit_price*quantity);
         $('#total_weight').val(wool_weight*quantity);
+        var total_weight_var = parseFloat($('#total_weight').val());
+        $('#total_price').val(unit_price*total_weight_var);
     });
 
     $( '#wool_weight' ).on('change keyup', function () {

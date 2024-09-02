@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import *
 from django.contrib import messages
-from Core.forms import ColorForm, SystemInfoForm
+from Core.forms import ColorForm, ExpensessTypeCreateForm, SystemInfoForm, ExpensessForm
 from Core.models import SystemInformation
 from Products.models import *
 from Factories.models import Factory, Supplier
@@ -30,6 +30,68 @@ def Index(request):
     modules = Modules.objects.all().last()
     today = datetime.now().date()
     return render(request, 'core/index.html', {'modules':modules, 'today': today})
+
+class ExpensessTypeList(LoginRequiredMixin, ListView):
+    login_url = '/auth/login/'
+    model = ExpnsessType
+    paginate_by = 12
+    template_name = 'Core/expensses_type_list.html'
+    
+    def get_queryset(self):
+        qureyset = self.model.objects.all().order_by('-id')
+        return qureyset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['type'] = 'list'
+        context['title'] = 'قائمة البنود'
+        context['icons'] = '<i class="fas fa-shapes"></i>'
+        context['page'] = 'active'
+        context['count'] = self.model.objects.all().count()
+        return context
+    
+class ExpensessTypeCreate(LoginRequiredMixin, CreateView):
+    login_url = ' /auth/login/'
+    model = ExpnsessType
+    template_name = 'forms/form_template.html'
+    form_class = ExpensessTypeCreateForm
+    success_url = reverse_lazy('Core:ExpensessTypeList')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'اضافة نوع جديد'
+        context['message'] = 'info'
+        context['action_url'] = reverse_lazy('Core:ExpensessTypeCreate')
+        return context
+    
+    def get_success_url(self):
+        messages.success(self.request, "تم إضافة بند جديد  ", extra_tags="success")
+
+        if self.request.POST.get('url'):
+            return self.request.POST.get('url')
+        else:
+            return self.success_url
+
+
+class ExpensessTypeDelete(LoginRequiredMixin, UpdateView):
+    login_url = '/auth/login/'
+    model = ExpnsessType
+    form_class = ExpensessTypeCreateForm
+    template_name = 'forms/form_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'حذف البند : ' + str(self.object.name)
+        context['message'] = 'super_delete'
+        context['action_url'] = reverse_lazy('Core:ExpensessTypeDelete', kwargs={'pk': self.object.id})
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, " تم حذف البند " + str(self.object) + " نهائيا بنجاح ", extra_tags="success")
+        my_form = ExpnsessType.objects.get(id=self.kwargs['pk'])
+        my_form.delete()
+        return redirect('Core:ExpensessTypeList')
+
 
 class ColorList(LoginRequiredMixin, ListView):
     login_url = '/auth/login/'
@@ -99,8 +161,7 @@ class ColorDelete(LoginRequiredMixin, UpdateView):
     model = Color
     form_class = ColorForm
     template_name = 'forms/form_template.html'
-    
- 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'حذف اللون : ' + str(self.object.color_name)
@@ -591,3 +652,59 @@ def SystemStatistics(request):
         'treasuries_dict': treasuries_dict,
     })
 
+
+def ExpensessDetail(request):
+
+    form = ExpensessForm()
+    expensess_type = ExpnsessType.objects.all()
+    object_list = Expnsess.objects.all().order_by('-id')
+    action_url = reverse_lazy('Core:ExpensessCreate')
+    system_info = SystemInformation.objects.all()
+    if system_info.count() > 0:
+        system_info = system_info.last()
+    else:
+        system_info = None
+
+    context = {
+        'form': form,
+        'action_url': action_url,
+        'system_info': system_info,
+        'date': datetime.now().date(),
+        'expensess_type': expensess_type,
+        'object_list': object_list
+    }
+    return render(request, 'Core/expensses_list.html', context)
+
+
+def ExpensessCreate(request):
+    express_type = ExpnsessType.objects.get(id=request.POST.get('expnsess_type'))
+    form = ExpensessForm(request.POST or None)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        obj.admin = request.user 
+        obj.expnsess_type= express_type
+        obj.save()
+        messages.success(request, " تم اضافة مصروف جديد ", extra_tags="success")
+    else:
+        messages.error(request, " حدث خطأ أثناء اضافة المصروف ", extra_tags="danger")
+    return redirect('Core:ExpensessDetail')
+
+
+class ExpensessDelete(LoginRequiredMixin, UpdateView):
+    login_url = '/auth/login/'
+    model = Expnsess
+    form_class = ExpensessForm
+    template_name = 'forms/form_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'حذف البند : '
+        context['message'] = 'super_delete'
+        context['action_url'] = reverse_lazy('Core:ExpensessDelete', kwargs={'pk': self.object.id})
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, " تم حذف البند " + str(self.object) + " نهائيا بنجاح ", extra_tags="success")
+        my_form = Expnsess.objects.get(id=self.kwargs['pk'])
+        my_form.delete()
+        return redirect('Core:ExpensessDetail')
