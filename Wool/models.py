@@ -58,6 +58,7 @@ class WoolSupplierQuantity(models.Model):
     wool_item_count = models.FloatField(default=0.0, verbose_name="عدد الشكاير")
     wool_weight = models.FloatField(default=0.0, verbose_name="الوزن بالكيلو")
     wool_loat_number = models.IntegerField(null=True, blank=True, verbose_name="رقم اللوط")
+    wool_price = models.FloatField(default=0.0, null=True, blank=True, verbose_name="السعر")
     total_weight = models.FloatField(default=0.0, verbose_name="اجمالي الوزن")
     total_account = models.FloatField(default=0.0, verbose_name="اجمالي الحساب")
     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسؤول")

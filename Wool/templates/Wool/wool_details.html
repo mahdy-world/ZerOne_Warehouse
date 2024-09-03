@@ -235,15 +235,16 @@
                                                                                     <form method="post" action="{{action_url}}">
                                                                                     {% csrf_token %}
                                                                                     <tr>
-                                                                                        <th class="col-lg-2 col-xl-2 col-md-2">
+                                                                                        <th class="col-lg-1 col-xl-1 col-md-1">
                                                                                             {{inside_form.date|as_crispy_field}}
                                                                                         </th>
                                                                                         <th class="col-lg-2 col-xl-2 col-md-2 sel">{{inside_form.supplier|as_crispy_field}}</th>
                                                                                         <th class="col-lg-2 col-xl-2 col-md-2 sel">{{inside_form.wool_color|as_crispy_field}}</th>
-                                                                                        <th class="col-lg-2 col-xl-2 col-md-2">{{inside_form.wool_item_count|as_crispy_field}}</th>
-                                                                                        <th class="col-lg-2 col-xl-2 col-md-2">{{inside_form.wool_weight|as_crispy_field}} </th>
+                                                                                        <th class="col-lg-1 col-xl-1 col-md-1">{{inside_form.wool_item_count|as_crispy_field}}</th>
+                                                                                        <th class="col-lg-1 col-xl-1 col-md-1">{{inside_form.wool_weight|as_crispy_field}} </th>
                                                                                         <th class="col-lg-2 col-xl-2 col-md-2">{{inside_form.wool_loat_number|as_crispy_field}} </th>
                                                                                         <th class="col-lg-2 col-xl-2 col-md-2">{{inside_form.total_weight|as_crispy_field}} </th>
+                                                                                        <th class="col-lg-1 col-xl-1 col-md-1">{{inside_form.wool_price|as_crispy_field}} </th>
                                                                                         <th class="col-lg-2 col-xl-2 col-md-2">{{inside_form.total_account|as_crispy_field}} </th>
                                                                                         <th class="col-lg-2 col-xl-2 col-md-2">
                                                                                             <button style="width: 100%" type="submit" class="btn btn-success">اضافة</button>
@@ -325,6 +326,7 @@
                                                                                             <th>الوزن بالكيلو</th>
                                                                                             <th>رقم اللوط</th>
                                                                                             <th>اجمالي الوزن</th>
+                                                                                            <th>السعر</th>
                                                                                             <th>اجمالي الحساب</th>
                                                                                             {% if request.user.is_superuser %}
                                                                                             {% if not supplier.deleted %}
@@ -372,11 +374,15 @@
                                                                                             <td>
                                                                                                 {{x.wool_weight|floatformat:3}}
                                                                                             </td>
+                                                                                           
                                                                                             <td>
                                                                                                 {{x.wool_loat_number}}
                                                                                             </td>
                                                                                             <td>
                                                                                                 {{x.total_weight}}
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                {{x.wool_price|floatformat:2}}
                                                                                             </td>
                                                                                             <td>
                                                                                                 {{ x.total_account|floatformat:2 }}
@@ -419,6 +425,7 @@
                                                                                             <th></th>
                                                                                             {% endif %}
                                                                                             {% endif %}
+                                                                                            <th></th>
                                                                                             <th></th>
                                                                                         </tr>
                                                                                     </tfoot>
@@ -701,14 +708,14 @@
                         }, 0);
     
                     total2 = api
-                        .column(9)
+                        .column(10)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
     
                     pageTotal2 = api
-                        .column(9, { page: 'current' })
+                        .column(10, { page: 'current' })
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
@@ -716,7 +723,7 @@
     
                     // total number position on the footer
                     $(api.column(8).footer()).html('' + pageTotal.toFixed(2) + ' ( من ' + total.toFixed(2) + ' )');
-                    $(api.column(9).footer()).html('' + pageTotal2.toFixed(3) + ' ( من ' + total2.toFixed(3) + ' )');
+                    $(api.column(10).footer()).html('' + pageTotal2.toFixed(3) + ' ( من ' + total2.toFixed(3) + ' )');
                     $(api.column(5).footer()).html('' + items_total_page.toFixed(2) + ' ( من ' + items_total.toFixed(2) + ' )');
                 },
     
@@ -732,7 +739,7 @@
                         extend: 'print',
                         text: 'طباعة الجدول',
                         exportOptions: {
-                            columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            columns: [ 0, 1, 2,  4, 5, 6, 7, 8, 9, 10],
                             modifier: {
                                 page: 'current'
                             }
@@ -745,6 +752,8 @@
                                 .append(
                                     '<h1 style="position:absolute; bottom:0; left:0">نظام زيرو وان لإدارة مصانع التريكو</h1>'
                                 );
+                                
+                            $(win.document.body).find('body').css('font-size', '12pt');
                         },
                         messageBottom: function () {
                             {% if system_info.logo %}
@@ -1157,6 +1166,18 @@
         var wool_item_count = parseFloat(this.value);
         var wool_weight = parseFloat($('#wool_weight').val());
         $('#total_weight').val(wool_item_count*wool_weight);
+    });
+
+    $( '#wool_price' ).on('change keyup', function () {
+        var wool_price = parseFloat(this.value);
+        var total_weight = parseFloat($('#total_weight').val());
+        $('#total_account').val(total_weight*wool_price);
+    });
+
+    $( '#total_weight' ).on('change keyup', function () {
+        var total_weight = parseFloat(this.value);
+        var wool_price = parseFloat($('#wool_price').val());
+        $('#total_account').val(total_weight*wool_price);
     });
 
 </script>
